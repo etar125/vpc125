@@ -1,5 +1,2 @@
-CC=tcc
-PREFIX=
-
 all:
-	make -C e125v1 CC=$(CC) PREFIX=$(PREFIX)
+	make -C e125v1 CC=$(CC) CXX=$(CXX) CFLAGS="$(CFLAGS)" CXXFLAGS="$(CXXFLAGS)" PREFIX=$(PREFIX)

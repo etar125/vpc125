@@ -6,7 +6,6 @@ CXXFLAGS=$(CFLAGS)
 build: lite
 
 updtss:
-	cd src
 	rm -rf tinyss
 	git clone https://github.com/etar125/tinyss.git
 	rm -rf tinyss/.git
@@ -16,12 +15,12 @@ updtss:
 	rm -rf docs
 	mkdir -p tinyss/bin
 
-library: tinyss/makefile
+library: tinyss/Makefile
 	$(MAKE) -C tinyss lib CC="$(CC)" CFLAGS="$(CFLAGS)"
 
-lite: library src/lite/lite.c src/tinyss/bin/tinyss.h src/tinyss/bin/libtinyss.a
+lite: library src/lite/lite.c tinyss/bin/tinyss.h tinyss/bin/libtinyss.a
 	mkdir -p bin
-	$(CC) src/lite/lite.c -o bin/lite125 -Lsrc/tinyss/bin -Isrc/tinyss/bin -ltinyss $(CFLAGS)
+	$(CC) src/lite/lite.c -o bin/lite125 -Ltinyss/bin -Itinyss/bin -ltinyss $(CFLAGS)
 
 clean:
 	rm -r bin/*

@@ -21,7 +21,7 @@ library: tinyss/makefile
 
 lite: library src/lite/lite.c src/tinyss/bin/tinyss.h src/tinyss/bin/libtinyss.a
 	mkdir -p bin
-	$(CC) src/lite/lite.c -o bin/lite125 -Lsrc/tinyss/bin -ltinyss $(CFLAGS)
+	$(CC) src/lite/lite.c -o bin/lite125 -Lsrc/tinyss/bin -Isrc/tinyss/bin -ltinyss $(CFLAGS)
 
 clean:
 	rm -r bin/*

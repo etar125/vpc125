@@ -1,0 +1,63 @@
+# lite 8 test
+define pos 0
+define ins \ 
+define arg \ 
+define _val \ 
+
+:loop
+    if pos g 255
+        exit
+    end
+
+    call LGETP
+
+    if ins e 1
+        exit
+    elif ins e 2
+        call LGETP
+        gpushb 128
+        gpushb _val
+        gcall get
+        op _val + $ins
+        gpushb 128
+        gpushb $_val
+        gcall set
+    elif ins e 3
+        call LGETP
+        gpushb 128
+        gpushb _val
+        gcall get
+        op _val - $ins
+        gpushb 128
+        gpushb $_val
+        gcall set
+    elif ins e 4
+        gpushb 128
+        gpushb _val
+        gcall get
+        gpushb $_val
+        gcall print
+        gpushb \n
+        gcall print
+    else
+        gpushb "Unknown instruction: "
+        gcall print
+        gpushb $ins
+        gcall print
+        gpushb \n
+        gcall print
+    end
+goto loop
+
+
+
+:LGET
+    gpushb $pos
+    gpushb ins
+    gcall get
+ret
+
+:LGETP
+    call LGET
+    op pos + 1
+ret

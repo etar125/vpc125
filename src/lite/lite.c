@@ -7,7 +7,7 @@
 #include "tinyss.h"
 
 void help() {
-    printf("lite125 v0.1.3\n\
+    printf("lite125 v0.1.5\n\
 lite125 [options] binary_file\n\
 \n\
     -s --save <file>        Save memory on exit\n\
@@ -56,7 +56,7 @@ void _reverse(char str[], int length) {
 
 int main(int argc, char **argv) {
     if(argc == 1) { help(); return 0; }
-    char *sf = NULL, *lf = NULL, *ext = "lite8.tss";
+    char *sf = NULL, *ext = "lite8.tss";
     unsigned char file[256];
     char *ecode;
     FILE *f, *ef; size_t fsz, esz;
@@ -87,7 +87,29 @@ int main(int argc, char **argv) {
                 printf("load: excepted file name\n");
                 return 1;
             } i++;
-            lf = argv[i];
+            f = fopen(argv[i], "r");
+            if(!f) {
+                printf("file error\n");
+                return 1;
+            }
+            fseek(f, 0L, SEEK_END);
+            fsz = ftell(f);
+            rewind(f);
+            if(fsz > 256) {
+                printf("file size is bigger than 256 bytes\n");
+                return 1;
+            } fread(file, 1, fsz, f);
+            fp = 0;
+            short i = 0;
+            while(fp < fsz) {
+                if(i == 256) {
+                    printf("mem error\n");
+                    return 1;
+                }
+                memory[i] = file[fp];
+                i++, fp++;
+            }
+            fclose(f);
         } else if(!strcmp(argv[i], "-e") || !strcmp(argv[i], "--extension")) {
             if(i + 1 == argc) {
                 printf("extension: excepted file name\n");
@@ -107,7 +129,7 @@ int main(int argc, char **argv) {
                 fread(ecode, 1, esz, ef);
             }
         } else if(!strcmp(argv[i], "-h") || !strcmp(argv[i], "--help")) { help(); }
-        else if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) { printf("lite125 v0.1.0\n"); }
+        else if(!strcmp(argv[i], "-v") || !strcmp(argv[i], "--version")) { printf("lite125 v0.1.5\n"); }
         else {
             if(!ef) {
                 printf("no extension\n");
@@ -123,7 +145,7 @@ int main(int argc, char **argv) {
             if(fsz > 256) {
                 printf("file size is bigger than 256 bytes\n");
                 return 1;
-            } fgets(file, fsz, f);
+            } fread(file, 1, fsz, f);
             fp = 1;
             short i = file[0];
             while(fp < fsz) {
@@ -140,6 +162,11 @@ int main(int argc, char **argv) {
             fclose(f);
         }
     } if(ef) { fclose(ef); }
+    if(sf) {
+        f = fopen(sf, "w");
+        fwrite(memory, 1, 256, f);
+        fclose(f);
+    }
     free(ecode);
 }
 
